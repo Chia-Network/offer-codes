@@ -60,8 +60,6 @@ async fn upload_offer(
     State(state): State<AppState>,
     Json(req): Json<UploadOffer>,
 ) -> Result<Json<UploadOfferResponse>, (StatusCode, String)> {
-    dbg!(&req);
-
     let spend_bundle: SpendBundle = Offer::decode(&req.offer)
         .map_err(|error| {
             tracing::error!("Error decoding offer: {error}");
