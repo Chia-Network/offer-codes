@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT IGNORE INTO offers (code, offer) VALUES (?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "8e9cdbeaa31b8ecf738fc07a662890640e3d7147b4786c215ccc26fce19d68e0"
+}
