@@ -23,3 +23,12 @@ jobs:
       
       - name: Run tests
         run: cargo test
+
+      - name: Build
+        run: cargo build
+
+  build-image:
+    uses: Chia-Network/actions/.github/workflows/docker-build.yaml@main
+    with:
+      push: false
+      docker-platforms: 'linux/amd64'
