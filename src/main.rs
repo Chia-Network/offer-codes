@@ -1,5 +1,3 @@
-mod db;
-
 use std::env;
 
 use anyhow::Result;
@@ -10,14 +8,14 @@ use chia::{
     traits::Streamable,
 };
 use chia_wallet_sdk::driver::Offer;
-use db::Database;
 use dotenvy::dotenv;
 use serde::{Deserialize, Serialize};
+use sqlx::{migrate, MySqlPool};
 use tokio::net::TcpListener;
 
 #[derive(Clone)]
 struct AppState {
-    db: Database,
+    db: MySqlPool,
     pk: PublicKey,
 }
 
@@ -27,7 +25,10 @@ async fn main() -> Result<()> {
 
     dotenv()?;
 
-    let db = Database::new("db")?;
+    let db = MySqlPool::connect(&env::var("DATABASE_URL")?).await?;
+
+    migrate!("./migrations").run(&db).await?;
+
     let pk = PublicKey::from_bytes(
         &hex::decode(env::var("PUBLIC_KEY")?)?
             .try_into()
@@ -40,6 +41,7 @@ async fn main() -> Result<()> {
         .with_state(AppState { db, pk });
 
     let listener = TcpListener::bind("0.0.0.0:3000").await?;
+    tracing::info!("Listening on {}", listener.local_addr()?);
     axum::serve(listener, app).await?;
 
     Ok(())
@@ -59,28 +61,36 @@ struct UploadOfferResponse {
 async fn upload_offer(
     State(state): State<AppState>,
     Json(req): Json<UploadOffer>,
-) -> Result<Json<UploadOfferResponse>, (StatusCode, String)> {
+) -> Result<Json<UploadOfferResponse>, StatusCode> {
     let spend_bundle: SpendBundle = Offer::decode(&req.offer)
         .map_err(|error| {
             tracing::error!("Error decoding offer: {error}");
-            (StatusCode::INTERNAL_SERVER_ERROR, error.to_string())
+            StatusCode::INTERNAL_SERVER_ERROR
         })?
         .into();
 
     let spend_bundle_hash = spend_bundle.hash();
 
     if !verify(&req.signature, &state.pk, spend_bundle_hash) {
-        return Err((StatusCode::UNAUTHORIZED, "Invalid signature".to_string()));
+        return Err(StatusCode::UNAUTHORIZED);
     }
 
-    let code = spend_bundle_hash[0..12].try_into().unwrap();
-    state
-        .db
-        .insert_offer(code, spend_bundle.to_bytes().unwrap())
-        .unwrap();
+    let code = spend_bundle_hash[0..12].to_vec();
+
+    if let Err(error) = sqlx::query!(
+        "INSERT IGNORE INTO offers (code, offer) VALUES (?, ?)",
+        code,
+        spend_bundle.to_bytes().unwrap()
+    )
+    .execute(&state.db)
+    .await
+    {
+        tracing::error!("Error inserting offer: {error}");
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
+    }
 
     Ok(Json(UploadOfferResponse {
-        code: BytesImpl::new(code),
+        code: BytesImpl::new(code.try_into().unwrap()),
     }))
 }
 
@@ -98,11 +108,18 @@ async fn download_offer(
     State(state): State<AppState>,
     Json(req): Json<DownloadOffer>,
 ) -> Result<Json<DownloadOfferResponse>, StatusCode> {
-    let Some(offer) = state.db.offer(req.code.to_bytes()).map_err(|error| {
-        tracing::error!("Error fetching offer: {error}");
-        StatusCode::INTERNAL_SERVER_ERROR
-    })?
-    else {
+    let offer = match sqlx::query!("SELECT offer FROM offers WHERE code = ?", req.code.to_vec())
+        .fetch_optional(&state.db)
+        .await
+    {
+        Ok(row) => row.map(|row| row.offer),
+        Err(error) => {
+            tracing::error!("Error fetching offer: {error}");
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
+
+    let Some(offer) = offer else {
         return Ok(Json(DownloadOfferResponse { offer: None }));
     };
 
