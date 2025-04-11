@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT offer FROM offers WHERE code = ?",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "offer",
+        "type_info": {
+          "type": "Blob",
+          "flags": "NOT_NULL | BLOB | BINARY | NO_DEFAULT_VALUE",
+          "max_size": 65535
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b6ef9f77cb5e45c76beff6ae3b2b30441617636f5782444ce81a651ad73110d7"
+}
