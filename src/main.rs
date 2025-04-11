@@ -40,7 +40,7 @@ async fn main() -> Result<()> {
         .route("/download_offer", post(download_offer))
         .with_state(AppState { db, pk });
 
-    let listener = TcpListener::bind("0.0.0.0:3000").await?;
+    let listener = TcpListener::bind(format!("0.0.0.0:{}", env::var("PORT")?)).await?;
     tracing::info!("Listening on {}", listener.local_addr()?);
     axum::serve(listener, app).await?;
 
