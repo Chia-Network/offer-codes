@@ -1,0 +1,31 @@
+image:
+  repository: ghcr.io/chia-network/offer-codes
+  tag: "{{ DOCKER_TAG }}"
+
+imagePullSecrets:
+  - name: offer-codes-image-pull
+
+deployment:
+  containerPort: 3000
+
+secretFiles:
+  - mountPath: "/app"
+    filename: .env
+    content: |
+      MNEMONIC={{ MNEMONIC }}
+      PUBLIC_KEY={{ MASTER_PUBLIC_KEY }}
+      PORT=3000
+      DATABASE_URL="mysql://{{ MYSQL_USER }}:{{ MYSQL_PASSWORD }}@{{ MYSQL_HOST }}:3306/{{ MYSQL_DATABASE }}"
+      BASE_URL="http://localhost:3000"
+
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Egress
+  egressRules:
+    - to:
+        - ipBlock:
+            cidr: "{{ MYSQL_HOST }}/32"
+      ports:
+        - protocol: TCP
+          port: 3306
