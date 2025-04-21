@@ -4,7 +4,7 @@ use anyhow::Result;
 use axum::{extract::State, http::StatusCode, routing::post, Json, Router};
 use chia::{
     bls::{verify, PublicKey, Signature},
-    protocol::{BytesImpl, SpendBundle},
+    protocol::{Bytes32, SpendBundle},
     traits::Streamable,
 };
 use chia_wallet_sdk::driver::Offer;
@@ -55,7 +55,7 @@ struct UploadOffer {
 
 #[derive(Debug, Serialize)]
 struct UploadOfferResponse {
-    code: BytesImpl<12>,
+    code: Bytes32,
 }
 
 async fn upload_offer(
@@ -69,17 +69,15 @@ async fn upload_offer(
         })?
         .into();
 
-    let spend_bundle_hash = spend_bundle.hash();
+    let code = Bytes32::new(spend_bundle.hash());
 
-    if !verify(&req.signature, &state.pk, spend_bundle_hash) {
+    if !verify(&req.signature, &state.pk, code) {
         return Err(StatusCode::UNAUTHORIZED);
     }
 
-    let code = spend_bundle_hash[0..12].to_vec();
-
     if let Err(error) = sqlx::query!(
         "INSERT IGNORE INTO offers (code, offer) VALUES (?, ?)",
-        code,
+        code.to_vec(),
         spend_bundle.to_bytes().unwrap()
     )
     .execute(&state.db)
@@ -89,14 +87,12 @@ async fn upload_offer(
         return Err(StatusCode::INTERNAL_SERVER_ERROR);
     }
 
-    Ok(Json(UploadOfferResponse {
-        code: BytesImpl::new(code.try_into().unwrap()),
-    }))
+    Ok(Json(UploadOfferResponse { code }))
 }
 
 #[derive(Debug, Deserialize)]
 struct DownloadOffer {
-    code: BytesImpl<12>,
+    code: Bytes32,
 }
 
 #[derive(Debug, Serialize)]
