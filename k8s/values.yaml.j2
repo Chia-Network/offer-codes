@@ -18,12 +18,14 @@ secretFiles:
       DATABASE_URL="mysql://{{ MYSQL_USER }}:{{ MYSQL_PASSWORD }}@{{ MYSQL_HOST }}:3306/{{ MYSQL_DATABASE }}"
       BASE_URL="http://localhost:3000"
 
+service:
+  enabled: true
+
 ingress:
   enabled: true
   tlsEnabled: true
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-cf
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,100.64.0.0/10
     nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,100.64.0.0/10
@@ -32,7 +34,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  className: nginx-internal
+  className: nginx
 
 networkPolicy:
   enabled: true
@@ -45,3 +47,8 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 3306
+
+resources:
+  limits:
+    cpu: 4000m
+    memory: 8Gi
