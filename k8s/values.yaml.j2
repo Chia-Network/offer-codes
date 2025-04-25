@@ -27,14 +27,12 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-cf
     ingress.kubernetes.io/ssl-redirect: "true"
-    ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,100.64.0.0/10
-    nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,100.64.0.0/10
   hosts:
     - host: "offercodes.chia.net"
       paths:
         - path: /
           pathType: Prefix
-  className: nginx-internal
+  className: nginx
 
 networkPolicy:
   enabled: true
