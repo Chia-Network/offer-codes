@@ -12,8 +12,8 @@ importers:
         specifier: ^1.8.4
         version: 1.8.4
       chia-wallet-sdk:
-        specifier: ^0.23.0
-        version: 0.23.0
+        specifier: ^0.27.0
+        version: 0.27.0
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -30,43 +30,43 @@ packages:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
     engines: {node: '>= 0.4'}
 
-  chia-wallet-sdk-darwin-arm64@0.23.0:
-    resolution: {integrity: sha512-kNZ2DrarzNMlPg34BXK9oXPjo5lYf430ROW/4BKNJisD1xtVRVRtsXNMcGPeIkl9vLhYPo5n6xNaM/ZyAcFoYw==}
+  chia-wallet-sdk-darwin-arm64@0.27.0:
+    resolution: {integrity: sha512-RMeDyvr2wqu6ijigUDix3VAwpgl0a74eyuhNz6vpYYQsAvGkVb+pdhvrJKH23zIe5u25Mag2ChUmnbowYmCd8A==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  chia-wallet-sdk-darwin-universal@0.23.0:
-    resolution: {integrity: sha512-eTwo7Rs37KqjXt7t7LV2ZrItLZsj/FY7RpFJQbA80uz5KqRsU2PJC4uz97u9RexgPXmRWiLxPwmcXSyTK5Dkgg==}
+  chia-wallet-sdk-darwin-universal@0.27.0:
+    resolution: {integrity: sha512-dLON6VyXQEcEutxAv5zcFkE7L1iIbob3HQh3rG7rOgRP4xpvqzu7OqSuuGnUQPvpvWpfePgnE4u1Ivn3mWAXsQ==}
     engines: {node: '>= 10'}
     os: [darwin]
 
-  chia-wallet-sdk-darwin-x64@0.23.0:
-    resolution: {integrity: sha512-TLvJgA3DODo0cBpV2A8zTYGLPjs8FS1xJ9v5YYVsE2Pnv965/LraIr/qqj/oRHtptpySh3NrPG1KUpimMCKe6w==}
+  chia-wallet-sdk-darwin-x64@0.27.0:
+    resolution: {integrity: sha512-nyGLES7Gl+vfxl0tFgkO6VSwUILZleIl1m4aB5UvMbefESECehd38YsqpstmXmH+yTa//jytgl4RhMeUAu27qg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
 
-  chia-wallet-sdk-linux-arm64-gnu@0.23.0:
-    resolution: {integrity: sha512-jkMUftQ6MtkhOOHQM0IdZrjkU8zr2T0SGX4E54j5jtLEipBal4E0BdObA1zy5FsVVq2h5jSqt4KLZ4V0BpONHQ==}
+  chia-wallet-sdk-linux-arm64-gnu@0.27.0:
+    resolution: {integrity: sha512-5zkoNjDn0t4wkwY97TaQVvN/+3WcpAOa54npsTe6Pvne0YP/nYVCFc/b58bx18obTMtd27pjhEMdQDN3ctD5+w==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  chia-wallet-sdk-linux-x64-gnu@0.23.0:
-    resolution: {integrity: sha512-PHMDnjb0aQtxE9yiSKOw7MUQ0pN55Hj60E4n0djaIsQgd9FKqrNeaxzhmED43hHZoNOmDe8QrTad5e/VT5rXIA==}
+  chia-wallet-sdk-linux-x64-gnu@0.27.0:
+    resolution: {integrity: sha512-PID3B8Qw7jisY9iCCGhXnFTYoF+Cj2i1D6hPuU4FsGkiUaMDpHp0AVW/pRaa3Ep/JSdFQP63BPt+elZguB2wyA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  chia-wallet-sdk-win32-x64-msvc@0.23.0:
-    resolution: {integrity: sha512-On0C2VgWAE9hRgdjFrpxnPOx7AP3/WY/LmceSfWa0YDc9mCEiUlpAJw4JMYiXFmh7Ej1uWVfttCATr0JRe9o6A==}
+  chia-wallet-sdk-win32-x64-msvc@0.27.0:
+    resolution: {integrity: sha512-AfpjY8L5l+Tm9mMKyIbcdBQ65QrEin4RhSds8X3tEeog6wniWwoXw4uWRIJbGeqMwta2Ye9oOEygXkUbOSUaug==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
 
-  chia-wallet-sdk@0.23.0:
-    resolution: {integrity: sha512-Eno0vFgzZzv1zM/+TLQ+68WrY5P2vJ9LiHwhMeMH9qB4mbFnmdNXHU0S7tEq+bj/q+1r3bVOfZrOx3igCNLdrA==}
+  chia-wallet-sdk@0.27.0:
+    resolution: {integrity: sha512-7R1Dh0shDcRKR0qWFqMNHpGx+E9SWnVmHPewwolWtgOcim6h4q5Kop7m32W1t3x/n0at9JrFPn9u7kPKnHnqlw==}
     engines: {node: '>= 14'}
 
   combined-stream@1.0.8:
@@ -173,32 +173,32 @@ snapshots:
       es-errors: 1.3.0
       function-bind: 1.1.2
 
-  chia-wallet-sdk-darwin-arm64@0.23.0:
+  chia-wallet-sdk-darwin-arm64@0.27.0:
     optional: true
 
-  chia-wallet-sdk-darwin-universal@0.23.0:
+  chia-wallet-sdk-darwin-universal@0.27.0:
     optional: true
 
-  chia-wallet-sdk-darwin-x64@0.23.0:
+  chia-wallet-sdk-darwin-x64@0.27.0:
     optional: true
 
-  chia-wallet-sdk-linux-arm64-gnu@0.23.0:
+  chia-wallet-sdk-linux-arm64-gnu@0.27.0:
     optional: true
 
-  chia-wallet-sdk-linux-x64-gnu@0.23.0:
+  chia-wallet-sdk-linux-x64-gnu@0.27.0:
     optional: true
 
-  chia-wallet-sdk-win32-x64-msvc@0.23.0:
+  chia-wallet-sdk-win32-x64-msvc@0.27.0:
     optional: true
 
-  chia-wallet-sdk@0.23.0:
+  chia-wallet-sdk@0.27.0:
     optionalDependencies:
-      chia-wallet-sdk-darwin-arm64: 0.23.0
-      chia-wallet-sdk-darwin-universal: 0.23.0
-      chia-wallet-sdk-darwin-x64: 0.23.0
-      chia-wallet-sdk-linux-arm64-gnu: 0.23.0
-      chia-wallet-sdk-linux-x64-gnu: 0.23.0
-      chia-wallet-sdk-win32-x64-msvc: 0.23.0
+      chia-wallet-sdk-darwin-arm64: 0.27.0
+      chia-wallet-sdk-darwin-universal: 0.27.0
+      chia-wallet-sdk-darwin-x64: 0.27.0
+      chia-wallet-sdk-linux-arm64-gnu: 0.27.0
+      chia-wallet-sdk-linux-x64-gnu: 0.27.0
+      chia-wallet-sdk-win32-x64-msvc: 0.27.0
 
   combined-stream@1.0.8:
     dependencies:
