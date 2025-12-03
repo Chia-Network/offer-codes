@@ -429,9 +429,9 @@ dependencies = [
 
 [[package]]
 name = "chia-sdk-client"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "776f43ff025815dfa15a696793d444e5dd3a6b92b2127db8abf12d8b2a0c59a0"
+checksum = "e4e79752f8c692ef3f74f94a902e91000cc8668a19c5e27c4142c44213a7a7b1"
 dependencies = [
  "chia-protocol",
  "chia-sdk-types",
@@ -439,7 +439,7 @@ dependencies = [
  "chia-traits 0.20.0",
  "futures-util",
  "once_cell",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
  "tokio",
  "tokio-tungstenite",
  "tracing",
@@ -448,9 +448,9 @@ dependencies = [
 
 [[package]]
 name = "chia-sdk-coinset"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3066df78f895f222c1201b7e612ee8c258950bd0167223ffbf873f05247c0fe6"
+checksum = "0df6e3ed139b6112cdbaf817c95c5cee9319f37f6df40e4547adb29687b33c96"
 dependencies = [
  "chia-protocol",
  "hex",
@@ -462,9 +462,9 @@ dependencies = [
 
 [[package]]
 name = "chia-sdk-derive"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7266145b0c0f0c2cb9b3db37098615caf857c5fe160891e620f8c9798cdcdc4"
+checksum = "bb9a5a307beb25d3d2ec5dc13c8c43e865ef8334c02164577128f550cd5d4f62"
 dependencies = [
  "convert_case",
  "quote",
@@ -473,9 +473,9 @@ dependencies = [
 
 [[package]]
 name = "chia-sdk-driver"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7481f280e7401c3c0f39bb293b3a21a218cf7cfa149bd7a42489970fda4d590"
+checksum = "268936013594eafecc2c60d6b9d28c8daea68dd45a86f9a14ef6d4aaf0c8ff4d"
 dependencies = [
  "bech32",
  "bigdecimal",
@@ -488,7 +488,7 @@ dependencies = [
  "chia-secp",
  "chia-sha2 0.20.0",
  "chia-traits 0.20.0",
- "chia_streamable_macro 0.21.1",
+ "chia_streamable_macro 0.21.2",
  "clvm-traits",
  "clvm-utils",
  "clvmr",
@@ -498,14 +498,14 @@ dependencies = [
  "indexmap",
  "num-bigint",
  "once_cell",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
 name = "chia-sdk-signer"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c71a663a4550b8b4861c818afd6f4930cb760a5b8b716e04b0b63adc2ce9561"
+checksum = "80a7262ffc41549aeade067a278924114740fb01fefb76f66fba2a2efbc38883"
 dependencies = [
  "chia-bls 0.20.0",
  "chia-consensus",
@@ -516,14 +516,14 @@ dependencies = [
  "clvm-traits",
  "clvmr",
  "k256",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
 name = "chia-sdk-test"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "faa49de928881c4a23b0ea8a5f37064f5d09eef74a7d72c9b1089131a0e191c2"
+checksum = "dda1d36b3ce18b0e3cd8f2a95ffc7ced95c1965040812cc75d2f120bf107c69e"
 dependencies = [
  "anyhow",
  "bip39",
@@ -542,14 +542,14 @@ dependencies = [
  "indexmap",
  "rand",
  "rand_chacha",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
 name = "chia-sdk-types"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6bdfe6c324707612fb2de568487f115c6a99d06c3b7ce6c8283fec2f75e8e6ec"
+checksum = "896773b58dd6f8c509ea0956462371d7a03c2e13d2d8646136c6376667864606"
 dependencies = [
  "chia-bls 0.20.0",
  "chia-consensus",
@@ -568,16 +568,16 @@ dependencies = [
 
 [[package]]
 name = "chia-sdk-utils"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d290e61303c14d0a0c71f28bc5230918221302c86454cc126a5c3caa6357cf07"
+checksum = "659f1d4a9b91d9164b1953b0497baec080243830d4f573ea7388d7cd33fae459"
 dependencies = [
  "bech32",
  "chia-protocol",
  "indexmap",
  "rand",
  "rand_chacha",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -658,9 +658,9 @@ dependencies = [
 
 [[package]]
 name = "chia-wallet-sdk"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a4f62a042954055bca9d8751f7d4bec1126a484a90507b4100d44d3e07b7052"
+checksum = "bb4e8041651d5dc6630307406b8e9e145a9325b293050edfab8006cccdb46d6b"
 dependencies = [
  "chia-bls 0.20.0",
  "chia-protocol",
@@ -702,9 +702,9 @@ dependencies = [
 
 [[package]]
 name = "chia_streamable_macro"
-version = "0.21.1"
+version = "0.21.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5f82304cea02fc89cab06685a56a92a0b60ab318b09f129ada6a1970ca8ca47"
+checksum = "7423f80e01a3be92630185b9694042c06cd2ffcf700e9b23c1aba828960b9abe"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -751,13 +751,15 @@ dependencies = [
 
 [[package]]
 name = "clvmr"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1485694ccaae3198b921ce3dac1954235acadd971289bae970c030f0a4f66174"
+checksum = "2630e56b575dc9a923b1070d25f5efc140f09a95b65badd4fdf02f58f485c8fe"
 dependencies = [
  "bitvec",
+ "bumpalo",
  "chia-bls 0.15.0",
  "chia-sha2 0.15.0",
+ "hex",
  "hex-literal",
  "k256",
  "lazy_static",
@@ -766,6 +768,7 @@ dependencies = [
  "num-traits",
  "p256",
  "rand",
+ "sha1",
  "sha3",
 ]
 
@@ -1013,7 +1016,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "976dd42dc7e85965fe702eb8164f21f450704bdde31faefd6471dba214cb594e"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -1903,9 +1906,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.21.1"
+version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d75b0bedcc4fe52caa0e03d9f1151a323e4aa5e2d78ba3580400cd3c9e2bc4bc"
+checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 
 [[package]]
 name = "openssl"
@@ -2284,7 +2287,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2782,7 +2785,7 @@ dependencies = [
  "getrandom 0.3.2",
  "once_cell",
  "rustix",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
