@@ -23,10 +23,11 @@ service:
 
 ingress:
   enabled: true
+  className: contour
   tlsEnabled: true
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-cf
-    ingress.kubernetes.io/ssl-redirect: "true"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
   hosts:
     - host: "offercodes.chia.net"
       paths:
