@@ -22,6 +22,13 @@ fn connect_options(url: &str, ssl_ca: Option<String>) -> Result<MySqlConnectOpti
 
     let options = match ssl_ca {
         Some(path) => options.ssl_mode(MySqlSslMode::VerifyIdentity).ssl_ca(path),
+        None if matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyCa | MySqlSslMode::VerifyIdentity
+        ) =>
+        {
+            options
+        }
         None => options.ssl_mode(MySqlSslMode::Required),
     };
 
@@ -181,6 +188,60 @@ mod tests {
 
         let options = connect_options(
             "mysql://user:pw@localhost:3306/db?ssl-mode=disabled",
+            Some("ca.pem".into()),
+        )
+        .expect("failed to parse connection options");
+        assert!(matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyIdentity
+        ));
+    }
+
+    #[test]
+    fn keeps_verify_identity_without_ssl_ca() {
+        let options = connect_options(
+            "mysql://user:pw@localhost:3306/db?ssl-mode=verify_identity",
+            None,
+        )
+        .expect("failed to parse connection options");
+        assert!(matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyIdentity
+        ));
+    }
+
+    #[test]
+    fn keeps_verify_ca_without_ssl_ca() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=verify_ca", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::VerifyCa));
+    }
+
+    #[test]
+    fn disabled_without_ssl_ca_becomes_required() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=disabled", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+    }
+
+    #[test]
+    fn preferred_without_ssl_ca_becomes_required() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=preferred", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+    }
+
+    #[test]
+    fn unset_without_ssl_ca_becomes_required() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+    }
+
+    #[test]
+    fn ssl_ca_forces_verify_identity() {
+        let options = connect_options(
+            "mysql://user:pw@localhost:3306/db?ssl-mode=verify_ca",
             Some("ca.pem".into()),
         )
         .expect("failed to parse connection options");
