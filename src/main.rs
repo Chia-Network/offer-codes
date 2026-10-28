@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, str::FromStr};
 
 use anyhow::Result;
 use axum::{extract::State, http::StatusCode, routing::post, Json, Router};
@@ -10,8 +10,23 @@ use chia::{
 use chia_wallet_sdk::driver::Offer;
 use dotenvy::dotenv;
 use serde::{Deserialize, Serialize};
-use sqlx::{migrate, MySqlPool};
+use sqlx::{
+    migrate,
+    mysql::{MySqlConnectOptions, MySqlPoolOptions, MySqlSslMode},
+    MySqlPool,
+};
 use tokio::net::TcpListener;
+
+fn connect_options(url: &str, ssl_ca: Option<String>) -> Result<MySqlConnectOptions> {
+    let options = MySqlConnectOptions::from_str(url)?;
+
+    let options = match ssl_ca {
+        Some(path) => options.ssl_mode(MySqlSslMode::VerifyIdentity).ssl_ca(path),
+        None => options.ssl_mode(MySqlSslMode::Required),
+    };
+
+    Ok(options)
+}
 
 #[derive(Clone)]
 struct AppState {
@@ -25,7 +40,11 @@ async fn main() -> Result<()> {
 
     dotenv()?;
 
-    let db = MySqlPool::connect(&env::var("DATABASE_URL")?).await?;
+    let ssl_ca = env::var("MYSQL_SSL_CA")
+        .ok()
+        .filter(|path| !path.is_empty());
+    let options = connect_options(&env::var("DATABASE_URL")?, ssl_ca)?;
+    let db = MySqlPoolOptions::new().connect_with(options).await?;
 
     migrate!("./migrations").run(&db).await?;
 
@@ -134,16 +153,40 @@ async fn download_offer(
 
 #[cfg(test)]
 mod tests {
+    use super::connect_options;
+    use sqlx::mysql::MySqlSslMode;
+
     #[test]
-    fn sqlx_enables_mysql_rsa_feature() {
+    fn sqlx_does_not_enable_mysql_rsa() {
         let manifest = include_str!("../Cargo.toml");
         let sqlx_line = manifest
             .lines()
             .find(|line| line.starts_with("sqlx ="))
             .expect("sqlx dependency entry not found");
         assert!(
-            sqlx_line.contains("\"mysql-rsa\""),
-            "sqlx dependency should enable the mysql-rsa feature"
+            !sqlx_line.contains("mysql-rsa"),
+            "sqlx dependency should not enable the mysql-rsa feature"
         );
+        assert!(
+            sqlx_line.contains("tls-rustls"),
+            "sqlx dependency should enable a rustls TLS backend"
+        );
+    }
+
+    #[test]
+    fn connection_requires_tls() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=disabled", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+
+        let options = connect_options(
+            "mysql://user:pw@localhost:3306/db?ssl-mode=disabled",
+            Some("ca.pem".into()),
+        )
+        .expect("failed to parse connection options");
+        assert!(matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyIdentity
+        ));
     }
 }
