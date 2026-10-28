@@ -131,3 +131,19 @@ async fn download_offer(
 
     Ok(Json(DownloadOfferResponse { offer: Some(offer) }))
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn sqlx_enables_mysql_rsa_feature() {
+        let manifest = include_str!("../Cargo.toml");
+        let sqlx_line = manifest
+            .lines()
+            .find(|line| line.starts_with("sqlx ="))
+            .expect("sqlx dependency entry not found");
+        assert!(
+            sqlx_line.contains("\"mysql-rsa\""),
+            "sqlx dependency should enable the mysql-rsa feature"
+        );
+    }
+}
