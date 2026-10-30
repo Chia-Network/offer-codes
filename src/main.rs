@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, str::FromStr};
 
 use anyhow::Result;
 use axum::{extract::State, http::StatusCode, routing::post, Json, Router};
@@ -10,8 +10,30 @@ use chia::{
 use chia_wallet_sdk::driver::Offer;
 use dotenvy::dotenv;
 use serde::{Deserialize, Serialize};
-use sqlx::{migrate, MySqlPool};
+use sqlx::{
+    migrate,
+    mysql::{MySqlConnectOptions, MySqlPoolOptions, MySqlSslMode},
+    MySqlPool,
+};
 use tokio::net::TcpListener;
+
+fn connect_options(url: &str, ssl_ca: Option<String>) -> Result<MySqlConnectOptions> {
+    let options = MySqlConnectOptions::from_str(url)?;
+
+    let options = match ssl_ca {
+        Some(path) => options.ssl_mode(MySqlSslMode::VerifyIdentity).ssl_ca(path),
+        None if matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyCa | MySqlSslMode::VerifyIdentity
+        ) =>
+        {
+            options
+        }
+        None => options.ssl_mode(MySqlSslMode::Required),
+    };
+
+    Ok(options)
+}
 
 #[derive(Clone)]
 struct AppState {
@@ -25,7 +47,11 @@ async fn main() -> Result<()> {
 
     dotenv()?;
 
-    let db = MySqlPool::connect(&env::var("DATABASE_URL")?).await?;
+    let ssl_ca = env::var("MYSQL_SSL_CA")
+        .ok()
+        .filter(|path| !path.is_empty());
+    let options = connect_options(&env::var("DATABASE_URL")?, ssl_ca)?;
+    let db = MySqlPoolOptions::new().connect_with(options).await?;
 
     migrate!("./migrations").run(&db).await?;
 
@@ -130,4 +156,98 @@ async fn download_offer(
     })?;
 
     Ok(Json(DownloadOfferResponse { offer: Some(offer) }))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::connect_options;
+    use sqlx::mysql::MySqlSslMode;
+
+    #[test]
+    fn sqlx_does_not_enable_mysql_rsa() {
+        let manifest = include_str!("../Cargo.toml");
+        let sqlx_line = manifest
+            .lines()
+            .find(|line| line.starts_with("sqlx ="))
+            .expect("sqlx dependency entry not found");
+        assert!(
+            !sqlx_line.contains("mysql-rsa"),
+            "sqlx dependency should not enable the mysql-rsa feature"
+        );
+        assert!(
+            sqlx_line.contains("tls-rustls"),
+            "sqlx dependency should enable a rustls TLS backend"
+        );
+    }
+
+    #[test]
+    fn connection_requires_tls() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=disabled", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+
+        let options = connect_options(
+            "mysql://user:pw@localhost:3306/db?ssl-mode=disabled",
+            Some("ca.pem".into()),
+        )
+        .expect("failed to parse connection options");
+        assert!(matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyIdentity
+        ));
+    }
+
+    #[test]
+    fn keeps_verify_identity_without_ssl_ca() {
+        let options = connect_options(
+            "mysql://user:pw@localhost:3306/db?ssl-mode=verify_identity",
+            None,
+        )
+        .expect("failed to parse connection options");
+        assert!(matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyIdentity
+        ));
+    }
+
+    #[test]
+    fn keeps_verify_ca_without_ssl_ca() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=verify_ca", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::VerifyCa));
+    }
+
+    #[test]
+    fn disabled_without_ssl_ca_becomes_required() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=disabled", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+    }
+
+    #[test]
+    fn preferred_without_ssl_ca_becomes_required() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db?ssl-mode=preferred", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+    }
+
+    #[test]
+    fn unset_without_ssl_ca_becomes_required() {
+        let options = connect_options("mysql://user:pw@localhost:3306/db", None)
+            .expect("failed to parse connection options");
+        assert!(matches!(options.get_ssl_mode(), MySqlSslMode::Required));
+    }
+
+    #[test]
+    fn ssl_ca_forces_verify_identity() {
+        let options = connect_options(
+            "mysql://user:pw@localhost:3306/db?ssl-mode=verify_ca",
+            Some("ca.pem".into()),
+        )
+        .expect("failed to parse connection options");
+        assert!(matches!(
+            options.get_ssl_mode(),
+            MySqlSslMode::VerifyIdentity
+        ));
+    }
 }
